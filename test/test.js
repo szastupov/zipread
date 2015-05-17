@@ -31,4 +31,8 @@ describe ("Archive", function () {
         });
     });
 
+    it ("should properly identify directories", function () {
+        assert(zip.files["testfiles/"].dir);
+    });
+
 });
