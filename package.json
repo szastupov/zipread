@@ -1,0 +1,25 @@
+{
+  "name": "zipread",
+  "version": "1.0.0",
+  "description": "Fast and memory efficient ZIP reader",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/szastupov/zipread.git"
+  },
+  "keywords": [
+    "zip"
+  ],
+  "author": "Stepan Zastupov <stepan.zastupov@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/szastupov/zipread/issues"
+  },
+  "homepage": "https://github.com/szastupov/zipread"
+}

@@ -1,4 +1,4 @@
-var Archive = require("../lib/archive.js");
+var Archive = require("../archive.js");
 var fs = require("fs");
 var assert = require("assert");
 
