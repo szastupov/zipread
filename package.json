@@ -1,6 +1,6 @@
 {
   "name": "zipread",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Fast and memory efficient ZIP reader",
   "main": "index.js",
   "directories": {
