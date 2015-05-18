@@ -1,6 +1,7 @@
 var Archive = require("../archive.js");
 var fs = require("fs");
 var assert = require("assert");
+var async = require("async");
 
 var testfiles = fs.readdirSync(__dirname + "/testfiles").map(function (f) {
     return "testfiles/" + f;
@@ -23,12 +24,25 @@ describe ("Archive", function () {
         });
     });
 
-    it ("should decompress files", function () {
+    it ("should decompress files (sync)", function () {
         testfiles.forEach(function(f) {
             var orig = fs.readFileSync(__dirname + "/" + f);
             var res = zip.readFileSync(f);
             assert.deepEqual(orig, res);
         });
+    });
+
+    it ("also has async interface", function (done) {
+        function compare(f, next) {
+            var orig = fs.readFileSync(__dirname + "/" + f);
+
+            zip.readFile(f, function (err, data) {
+                assert.ifError(err);
+                assert.deepEqual(orig, data);
+                next();
+            });
+        }
+        async.each(testfiles, compare, done);
     });
 
     it ("should properly identify directories", function () {

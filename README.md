@@ -9,7 +9,14 @@ zipread
 ```javascript
 var zipread = require("zipread");
 var zip = zipread("file.zip");
+
 var contents = zip.readFileSync("some_file.txt").toString();
+
+// Or for async version:
+zip.readFile("some_file.txt", function (err, buf) {
+	contents = buf.toString();
+});
+
 ```
 
 [npm-image]: https://img.shields.io/npm/v/zipread.svg?style=flat

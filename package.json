@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/szastupov/zipread",
   "devDependencies": {
+    "async": "^0.9.0",
     "mocha": "*"
   }
 }
