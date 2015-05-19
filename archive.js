@@ -36,8 +36,11 @@ Archive.prototype = {
 
     readFileSync: function(fname) {
         var file = this.files[fname];
-        var hdr = new Buffer(FH_SIZE);
+        if (!file) {
+            throw new Error("Path '" + fname + "' not found");
+        }
         
+        var hdr = new Buffer(FH_SIZE);
         this._readSync(hdr, file.offset);
         
         var dataOff = this._getDataOffset(file, hdr);
@@ -55,6 +58,10 @@ Archive.prototype = {
 
     readFile: function(fname, callback) {
         var file = this.files[fname];
+        if (!file) {
+            return callback(Error("Path '" + fname + "' not found"));
+        }
+
         var hdr = new Buffer(FH_SIZE);
         var self = this;
 
@@ -88,7 +95,7 @@ Archive.prototype = {
     },
 
     _getDataOffset: function(file, hdr) {
-        assert.equal(hdr.readUIntLE(0, 4), FH_SIGN);
+        assert.equal(hdr.readUIntLE(0, 4), FH_SIGN, "Couldn't find file signature");
 
         var fnameLen = hdr.readUIntLE(26, 2);
         var extraLen = hdr.readUIntLE(28, 2);
@@ -109,7 +116,7 @@ Archive.prototype = {
         var cde = new Buffer(CDE_SIZE);
         var read = this._readSync(cde, offset);
         assert.equal(read, cde.length);
-        assert.equal(cde.readUIntLE(0, 4), CDE_SIGN);
+        assert.equal(cde.readUIntLE(0, 4), CDE_SIGN, "Couldn't find CD signature");
 
         var fnameLen = cde.readUIntLE(28, 2);
         var extraLen = cde.readUIntLE(30, 2);
@@ -136,7 +143,7 @@ Archive.prototype = {
         // Find EOCD
         var eocd = new Buffer(EOCD_SIZE);
         this._readSync(eocd, this.fileLen - eocd.length);
-        assert.equal(eocd.readUIntLE(0, 4), EOCD_SIGN);
+        assert.equal(eocd.readUIntLE(0, 4), EOCD_SIGN, "Couldn't find EOCD signature");
 
         return {
             records: eocd.readUIntLE(10, 2),

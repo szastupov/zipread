@@ -49,4 +49,16 @@ describe ("Archive", function () {
         assert(zip.files["testfiles/"].dir);
     });
 
+    it ("should throw not exist error", function () {
+        assert.throws(function () {
+            zip.readFileSync("inexisting");
+        }, /Path 'inexisting' not found/);
+    });
+
+    it ("should return not exist error", function () {
+        zip.readFile("inexisting", function (err, data) {
+            assert(err instanceof Error, "err should be Error");
+        });
+    });
+
 });
