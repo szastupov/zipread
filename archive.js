@@ -30,6 +30,15 @@ function Archive(path) {
     }
 }
 
+// We need those mostly for Windows
+Archive.znorm = function(str) {
+    return str.replace(/\\/g, "/");
+};
+
+Archive.zjoin = function(a, b) {
+    return this.znorm(path.join(a, b));
+};
+
 Archive.prototype = {
     close: function() {
         closeSync(this.fd);
@@ -105,7 +114,7 @@ Archive.prototype = {
     },
 
     readdir: function(dir) {
-        dir = path.join(dir, "/");
+        dir = Archive.zjoin(dir, "/");
         var filtered = this.filter(function (relativePath, file) {
             var ss = relativePath.indexOf("/", dir.length);
             return relativePath.indexOf(dir) === 0

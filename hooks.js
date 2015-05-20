@@ -5,7 +5,7 @@ var path = require("path");
 var ZIP_CACHE = {};
 
 function getZip(path) {
-	path = znorm(path);
+	path = Archive.znorm(path);
 	var cached = ZIP_CACHE[path];
 	if (cached) {
 		return cached;
@@ -15,15 +15,6 @@ function getZip(path) {
 	ZIP_CACHE[path] = zip;
 
 	return zip;
-}
-
-// We need it mostly for Windows
-function znorm(str) {
-	return str.replace(/\\/g, "/");
-}
-
-function zjoin(a, b) {
-	return znorm(path.join(a, b));
 }
 
 function ZipFS(path) {
@@ -57,7 +48,7 @@ ZipFS.prototype = {
 	},
 
 	realpathSync: function(path) {
-		return zjoin(this.path, path);
+		return Archive.zjoin(this.path, path);
 	}
 };
 
@@ -72,7 +63,7 @@ function wrapFS (name) {
 		var zipBase = path.substr(0, idx+4);
 		var zipChild = path.substr(idx+5);
 		var zip = getZip(zipBase);
-		return zip[name](znorm(zipChild), arg1);
+		return zip[name](Archive.znorm(zipChild), arg1);
 	};
 }
 
