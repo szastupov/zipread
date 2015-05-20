@@ -3,7 +3,7 @@ var fs = require("fs");
 var assert = require("assert");
 var async = require("async");
 
-var testfiles = fs.readdirSync(__dirname + "/testfiles").map(function (f) {
+var testfiles = ["foo", "bar", "js/test.js"].map(function (f) {
     return "testfiles/" + f;
 });
 
@@ -59,6 +59,11 @@ describe ("Archive", function () {
         zip.readFile("inexisting", function (err, data) {
             assert(err instanceof Error, "err should be Error");
         });
+    });
+
+    it ("should read directory contents", function () {
+        var contents = zip.readdir("testfiles");
+        assert.deepEqual(contents, ["foo", "bar", "js"]);
     });
 
 });

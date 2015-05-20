@@ -1,4 +1,5 @@
 var fs = require("fs");
+var path = require("path");
 var assert = require("assert");
 var zlib = require('zlib');
 
@@ -34,7 +35,11 @@ Archive.prototype = {
         closeSync(this.fd);
     },
 
-    readFileSync: function(fname) {
+    exists: function(path) {
+        return path in this.files;
+    },
+
+    readFileSync: function(fname, encoding) {
         var file = this.files[fname];
         if (!file) {
             throw new Error("Path '" + fname + "' not found");
@@ -49,11 +54,16 @@ Archive.prototype = {
         var read = this._readSync(cbuf, dataOff);
         assert.equal(read, cbuf.length);
 
+        var result;
         if (file.method === 0) {
-            return cbuf;
+            result = cbuf;
         } else if (file.method === 8) {
-            return zlib.inflateRawSync(cbuf);
+            result = zlib.inflateRawSync(cbuf);
+        } else {
+            throw Error("Unsupported compression method " + file.method);
         }
+
+        return encoding ? result.toString(encoding) : result;
     },
 
     readFile: function(fname, callback) {
@@ -92,6 +102,20 @@ Archive.prototype = {
         }
 
         return result;
+    },
+
+    readdir: function(dir) {
+        dir = path.join(dir, "/");
+        var filtered = this.filter(function (relativePath, file) {
+            var ss = relativePath.indexOf("/", dir.length);
+            return relativePath.indexOf(dir) === 0
+                && relativePath !== dir
+                && (ss === -1 || ss == relativePath.length-1);
+        });
+        var found = filtered.map(function (file) {
+            return path.basename(file.name);
+        });
+        return found;
     },
 
     _getDataOffset: function(file, hdr) {
