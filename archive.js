@@ -23,11 +23,7 @@ function Archive(path) {
     this.fileLen = statSync(path).size;
     this.files = {};
 
-    var cd = this._getCD();
-    var off = cd.offset;
-    for (var i = 0; i < cd.records; i++) {
-        off += this._readCDEntry(off);
-    }
+    this._loadCD();
 }
 
 // We need those mostly for Windows
@@ -145,31 +141,31 @@ Archive.prototype = {
         return readAsync(this.fd, buf, 0, buf.length, position, callback);
     },
 
-    _readCDEntry: function(offset) {
-        var cde = new Buffer(CDE_SIZE);
-        var read = this._readSync(cde, offset);
-        assert.equal(read, cde.length);
-        assert.equal(cde.readUIntLE(0, 4), CDE_SIGN, "Couldn't find CD signature");
+    _readCDEntry: function(cdbuf, offset) {
+        function field(pos, size) {
+            return cdbuf.readUIntLE(offset + pos, size);
+        }
+        assert.equal(field(0, 4), CDE_SIGN, "Couldn't find CD signature");
 
-        var fnameLen = cde.readUIntLE(28, 2);
-        var extraLen = cde.readUIntLE(30, 2);
-        var commentLen = cde.readUIntLE(32, 2);
+        var fnameLen = field(28, 2);
+        var fnamePos = offset + CDE_SIZE;
+        var extraLen = field(30, 2);
+        var commentLen = field(32, 2);
 
-        var fname = new Buffer(fnameLen);
-        this._readSync(fname, offset + cde.length);
+        var fname = cdbuf.toString(undefined, fnamePos, fnamePos + fnameLen);
 
         var file = {
-            name: fname.toString(),
-            method: cde.readUIntLE(10, 2),
-            csize: cde.readUIntLE(20, 4),
-            usize: cde.readUIntLE(24, 4),
-            offset: cde.readUIntLE(42, 4)
+            name: fname,
+            method: field(10, 2),
+            csize: field(20, 4),
+            usize: field(24, 4),
+            offset: field(42, 4)
         };
         file.dir = file.csize === 0;
 
         this.files[file.name] = file;
 
-        return cde.length + fnameLen + extraLen + commentLen;
+        return CDE_SIZE + fnameLen + extraLen + commentLen;
     },
 
     _getCD: function() {
@@ -178,11 +174,24 @@ Archive.prototype = {
         this._readSync(eocd, this.fileLen - eocd.length);
         assert.equal(eocd.readUIntLE(0, 4), EOCD_SIGN, "Couldn't find EOCD signature");
 
+        var size = eocd.readUIntLE(12, 4);
+        var offset = eocd.readUIntLE(16, 4);
+        var cdbuf = new Buffer(size);
+        var read = this._readSync(cdbuf, offset);
+        assert.equal(read, size);
+
         return {
             records: eocd.readUIntLE(10, 2),
-            size: eocd.readUIntLE(12, 4),
-            offset: eocd.readUIntLE(16, 4)
+            buf: cdbuf
         };
+    },
+
+    _loadCD: function() {
+        var cd = this._getCD();
+        var off = 0;
+        for (var i = 0; i < cd.records; i++) {
+            off += this._readCDEntry(cd.buf, off);
+        }
     }
 };
 
