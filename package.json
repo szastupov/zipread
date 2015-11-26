@@ -17,6 +17,12 @@
     "zip"
   ],
   "author": "Stepan Zastupov <stepan.zastupov@gmail.com>",
+  "contributors": [
+    { "name": "elasim"
+    , "email": "elasim@naver.com"
+    , "url": "https://github.com/elasim"
+    }
+  ],
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/szastupov/zipread/issues"
