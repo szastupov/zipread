@@ -161,7 +161,7 @@ Archive.prototype = {
             usize: field(24, 4),
             offset: field(42, 4)
         };
-        file.dir = file.csize === 0;
+        file.dir = fname.substr(-1) == '/';
 
         this.files[file.name] = file;
 
