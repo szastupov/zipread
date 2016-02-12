@@ -3,7 +3,7 @@ var fs = require("fs");
 var assert = require("assert");
 var async = require("async");
 
-var testfiles = ["foo", "bar", "js/test.js"].map(function (f) {
+var testfiles = ["foo", "bar", "js/test.js", "empty"].map(function (f) {
     return "testfiles/" + f;
 });
 
@@ -63,7 +63,7 @@ describe ("Archive", function () {
 
     it ("should read directory contents", function () {
         var contents = zip.readdir("testfiles");
-        assert.deepEqual(contents, ["foo", "bar", "js"]);
+        assert.deepEqual(contents, ["bar", "empty", "foo", "js"]);
     });
 
 });
