@@ -134,10 +134,17 @@ Archive.prototype = {
     },
 
     _readSync: function(buf, position) {
+        if(!buf.length) {
+            return 0;
+        }
         return readSync(this.fd, buf, 0, buf.length, position);
     },
 
     _readAsync: function(buf, position, callback) {
+        if(!buf.length) {
+            callback(null, 0, buf);
+            return;
+        }
         return readAsync(this.fd, buf, 0, buf.length, position, callback);
     },
 
