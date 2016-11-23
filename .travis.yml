@@ -1,5 +1,12 @@
 language: node_js
 node_js:
-  - "0.12"
-  - "stable"
-  - "iojs"
+  - '0.12'
+  - stable
+deploy:
+  provider: npm
+  email: stepan.zastupov@gmail.com
+  api_key:
+    secure: pnBwL+Kas9O8jmEmUwdgXpl6WQSpMjwVl/JL4dgquN4XVpyOtNYCAIHxg5+B6i0QWdFi3QUm3Fz0GsyP8+ekMWjEYYuUjE0OH0qu5Hegm56QWNDBHPqFR4k6qhPZy0tm7DKZedl3csW16Pd7qazz6avFYuhBCn0IwWNMNLzS8LCDz2f3oER4a3zapHjL1DxQcm0t6BVV/jCimmMGusMINCkmJKPMu4M9BAfhQy2QisSkvQJNGRavm0ISCdfuwU1wr5xjMJHkDvvSkCyKFNJs3/z+F6dQKNDmwPhrz7mhz797hR3l07CTHGL7C+kv/ZIC5kc12T5A083j3G++bD6vgU5i0trmXjkP4t6XeIlVlUzkmXmAFZNirLk2TwAccdv9IHCI8iWFRtjiVOMmEKn2g1dHNaqOIAeFkfDo3+i8Q1hL2B2zEMOSOiK0tSpeDQgAvMvsy82wjVlPyTnon/p+u2CTYzumLYNF4/knsaBOXRibdJRTnaoldylisgj3QDR40b4JRNd0Oqg4UkTj3KA/VA0BhcCRh7U1VcZdJqXeN6TcBkOfpdr4/T/oIfjTnbfVJbFrlfkcPPeLOu+OkLBi/888D6XfsAq/tciDmIi/vzDXAngsTlnYkM7n58q5Z3W6VOWAMFLpIoTWX/cllDDsG9xsdwZmCl7At/Lp7bHl2BI=
+  on:
+    tags: true
+    repo: szastupov/zipread
